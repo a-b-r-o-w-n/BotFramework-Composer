@@ -5,7 +5,7 @@
 const path = require('path');
 
 module.exports = {
-  displayName: 'ui-plugin/prompts',
+  displayName: 'ui-plugin/select-dialog',
   preset: 'ts-jest/presets/js-with-ts',
   moduleNameMapper: {
     // use commonjs modules for test so they do not need to be compiled

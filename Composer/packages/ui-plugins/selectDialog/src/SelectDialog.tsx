@@ -89,7 +89,7 @@ export const SelectDialog: React.FC<FieldProps> = ({
         id={id}
         options={options}
         selectedKey={comboboxTitle ? 'customTitle' : value}
-        useComboBoxAsMenuWidth={true}
+        useComboBoxAsMenuWidth
         onBlur={() => onBlur && onBlur(id, value)}
         onFocus={() => onFocus && onFocus(id, value)}
         onItemClick={handleChange}
