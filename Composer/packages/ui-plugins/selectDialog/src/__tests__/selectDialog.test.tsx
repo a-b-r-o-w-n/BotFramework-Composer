@@ -1,12 +1,13 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+import React from 'react';
 import { cleanup, fireEvent, getAllByRole, render } from 'react-testing-library';
 import { Extension } from '@bfc/extension';
 
 import { SelectDialog } from '../SelectDialog';
 
-const flushPromises = () => new Promise(resolve => setImmediate(resolve));
+const flushPromises = () => Promise.resolve();
 
 const renderSelectDialog = ({ createDialog, navTo, onChange } = {}) => {
   const props = {
