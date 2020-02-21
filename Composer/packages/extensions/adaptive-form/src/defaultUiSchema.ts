@@ -3,8 +3,6 @@
 import { UISchema } from '@bfc/extension';
 import { SDKTypes } from '@bfc/shared';
 
-import { EditableField } from './components/fields';
-
 const globalHiddenProperties = ['$type', '$id', '$copy', '$designer', 'id'];
 const triggerUiSchema = {
   'ui:order': ['condition', '*'],
@@ -18,20 +16,6 @@ const DefaultUISchema: UISchema = {
     properties: {
       recognizer: {
         'ui:hidden': ['entities'],
-        properties: {
-          intents: {
-            properties: {
-              intent: {
-                'ui:label': false,
-                'ui:field': EditableField,
-              },
-              pattern: {
-                'ui:label': false,
-                'ui:field': EditableField,
-              },
-            },
-          },
-        },
       },
     },
   },
