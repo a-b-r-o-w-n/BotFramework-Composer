@@ -5,10 +5,9 @@ import { useShellApi, PluginConfig, FormErrors } from '@bfc/extension';
 import isEqual from 'lodash/isEqual';
 import ErrorBoundary from 'react-error-boundary';
 import { AdaptiveDialogSchema } from '@bfc/shared';
-import { JSONSchema4 } from 'json-schema';
 
 import PluginContext from '../../PluginContext';
-import { resolveBaseSchema, mergePluginConfigs } from '../../utils';
+import { resolveBaseSchema, getUISchema, mergePluginConfigs } from '../../utils';
 import { SchemaField } from '../SchemaField';
 
 import FormTitle from './FormTitle';
@@ -31,7 +30,7 @@ export const AdaptiveForm: React.FC<AdaptiveFormProps> = function AdaptiveForm(p
     }
   }, [formData]);
 
-  const $schema = useMemo<JSONSchema4 | undefined>(() => {
+  const $schema = useMemo(() => {
     if (schema && localData) {
       return resolveBaseSchema(schema, localData);
     }
@@ -40,6 +39,10 @@ export const AdaptiveForm: React.FC<AdaptiveFormProps> = function AdaptiveForm(p
   const pluginConfig = useMemo(() => {
     return mergePluginConfigs(...plugins);
   }, []);
+
+  const $uiSchema = useMemo(() => {
+    return getUISchema($schema, pluginConfig.uiSchema);
+  }, [$schema, pluginConfig]);
 
   const errors = useMemo(() => {
     const diagnostics = currentDialog?.diagnostics;
@@ -105,6 +108,7 @@ export const AdaptiveForm: React.FC<AdaptiveFormProps> = function AdaptiveForm(p
             name="root"
             rawErrors={errors}
             schema={$schema}
+            uiOptions={$uiSchema}
             value={localData}
             onChange={handleDataChange}
           />
