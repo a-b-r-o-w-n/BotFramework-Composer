@@ -12,7 +12,7 @@ const triggerUiSchema = {
 const DefaultUISchema: UISchema = {
   [SDKTypes.AdaptiveDialog]: {
     order: ['recognizer', '*'],
-    hidden: ['triggers', 'autoEndDialog', 'generator', 'selector', ...globalHiddenProperties],
+    hidden: ['triggers', 'autoEndDialog', 'generator', 'selector', 'schema', ...globalHiddenProperties],
   },
   [SDKTypes.BeginDialog]: {
     order: ['dialog', 'options', 'resultProperty', 'includeActivity', '*'],
