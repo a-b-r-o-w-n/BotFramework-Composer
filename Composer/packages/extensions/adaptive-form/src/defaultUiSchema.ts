@@ -13,11 +13,6 @@ const DefaultUISchema: UISchema = {
   [SDKTypes.AdaptiveDialog]: {
     order: ['recognizer', '*'],
     hidden: ['triggers', 'autoEndDialog', 'generator', 'selector', ...globalHiddenProperties],
-    properties: {
-      recognizer: {
-        'ui:hidden': ['entities'],
-      },
-    },
   },
   [SDKTypes.BeginDialog]: {
     order: ['dialog', 'options', 'resultProperty', 'includeActivity', '*'],
@@ -45,11 +40,11 @@ const DefaultUISchema: UISchema = {
   },
   [SDKTypes.Foreach]: {
     order: ['itemsProperty', '*'],
-    hidden: ['actions'],
+    hidden: ['actions', ...globalHiddenProperties],
   },
   [SDKTypes.ForeachPage]: {
     order: ['itemsProperty', 'pageSize', '*'],
-    hidden: ['actions'],
+    hidden: ['actions', ...globalHiddenProperties],
   },
   [SDKTypes.HttpRequest]: {
     order: ['method', 'url', 'body', 'headers', '*'],
@@ -152,6 +147,9 @@ const DefaultUISchema: UISchema = {
   },
   [SDKTypes.OAuthInput]: {
     order: ['connectionName', '*'],
+  },
+  [SDKTypes.RegexRecognizer]: {
+    hidden: ['entities', ...globalHiddenProperties],
   },
   [SDKTypes.ReplaceDialog]: {
     hidden: [...globalHiddenProperties],

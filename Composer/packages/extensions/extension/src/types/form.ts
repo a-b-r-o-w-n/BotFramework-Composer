@@ -29,7 +29,7 @@ export interface FieldProps<T = any> {
   readonly?: boolean;
   schema: JSONSchema4;
   transparentBorder?: boolean;
-  uiOptions: UIOptions;
+  uiOptions?: UIOptions;
   value?: T;
 
   onChange: ChangeHandler<T>;
