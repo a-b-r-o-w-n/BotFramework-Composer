@@ -7,15 +7,5 @@ import { JSONSchema4 } from 'json-schema';
  */
 export function getUISchema(schema?: JSONSchema4, uiSchema?: UISchema): UIOptions {
   const kind = schema?.properties?.$kind?.const;
-  const type = schema?.properties?.$type?.const;
-
-  if (uiSchema) {
-    if (type && uiSchema[type]) {
-      return uiSchema[type];
-    } else if (kind && uiSchema[kind]) {
-      return uiSchema[kind];
-    }
-  }
-
-  return {};
+  return uiSchema && kind && uiSchema[kind] ? uiSchema[kind] : {};
 }
