@@ -2,7 +2,7 @@
 // Licensed under the MIT License.
 /** @jsx jsx */
 import { jsx, css } from '@emotion/core';
-import React, { useContext, useMemo } from 'react';
+import React, { useContext } from 'react';
 import { FieldProps } from '@bfc/extension';
 
 import { getUISchema, resolveFieldWidget, resolveRef, getLabel } from '../utils';
@@ -47,10 +47,10 @@ const SchemaField: React.FC<FieldProps> = props => {
   } = props;
   const pluginConfig = useContext(PluginContext);
   const schema = resolveRef(baseSchema, definitions);
-  const uiOptions = useMemo(() => {
-    const uiSchema = getUISchema(schema, pluginConfig.uiSchema);
-    return Object.keys(uiSchema).length ? uiSchema : baseUIOptions;
-  }, [pluginConfig.uiSchema, schema]);
+  const uiOptions = {
+    ...getUISchema(schema, pluginConfig.uiSchema),
+    ...baseUIOptions,
+  };
 
   if (!schema || name.startsWith('$')) {
     return null;
