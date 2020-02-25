@@ -3,7 +3,7 @@
 import { UISchema } from '@bfc/extension';
 import { SDKTypes } from '@bfc/shared';
 
-const globalHiddenProperties = ['$type', '$id', '$copy', '$designer', 'id'];
+const globalHiddenProperties = ['$type', '$id', '$copy', '$designer', 'id', 'disabled'];
 const triggerUiSchema = {
   order: ['condition', '*'],
   hidden: ['actions', ...globalHiddenProperties],
@@ -16,9 +16,11 @@ const DefaultUISchema: UISchema = {
   },
   [SDKTypes.BeginDialog]: {
     order: ['dialog', 'options', 'resultProperty', 'includeActivity', '*'],
+    hidden: [...globalHiddenProperties],
   },
   [SDKTypes.CancelAllDialogs]: {
     order: ['dialog', 'property', '*'],
+    hidden: [...globalHiddenProperties],
   },
   [SDKTypes.ConditionalSelector]: {
     hidden: [...globalHiddenProperties],
@@ -31,12 +33,27 @@ const DefaultUISchema: UISchema = {
     //   },
     // },
   },
+  [SDKTypes.DeleteProperty]: {
+    hidden: [...globalHiddenProperties],
+  },
+  [SDKTypes.DeleteProperties]: {
+    hidden: [...globalHiddenProperties],
+  },
   [SDKTypes.EditActions]: {
     // properties: {
     //   actions: {
     //     field: 'StepsField',
     //   },
     // },
+  },
+  [SDKTypes.EditArray]: {
+    hidden: [...globalHiddenProperties],
+  },
+  [SDKTypes.EndDialog]: {
+    hidden: [...globalHiddenProperties],
+  },
+  [SDKTypes.EndTurn]: {
+    hidden: [...globalHiddenProperties],
   },
   [SDKTypes.Foreach]: {
     order: ['itemsProperty', '*'],
@@ -48,6 +65,7 @@ const DefaultUISchema: UISchema = {
   },
   [SDKTypes.HttpRequest]: {
     order: ['method', 'url', 'body', 'headers', '*'],
+    hidden: [...globalHiddenProperties],
     // properties: {
     //   body: {
     //     // field: 'JsonField',
@@ -158,6 +176,12 @@ const DefaultUISchema: UISchema = {
   [SDKTypes.RepeatDialog]: {
     hidden: [...globalHiddenProperties],
     order: ['options', 'includeActivity', '*'],
+  },
+  [SDKTypes.SetProperty]: {
+    hidden: [...globalHiddenProperties],
+  },
+  [SDKTypes.SetProperties]: {
+    hidden: [...globalHiddenProperties],
   },
   [SDKTypes.SwitchCondition]: {
     hidden: ['default', ...globalHiddenProperties],
