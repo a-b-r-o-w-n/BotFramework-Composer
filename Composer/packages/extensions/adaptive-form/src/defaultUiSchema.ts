@@ -3,7 +3,7 @@
 import { UISchema } from '@bfc/extension';
 import { SDKTypes } from '@bfc/shared';
 
-const globalHiddenProperties = ['$type', '$id', '$copy', '$designer', 'id', 'disabled'];
+const globalHiddenProperties = ['$type', '$id', '$copy', '$designer', 'id'];
 const triggerUiSchema = {
   order: ['condition', '*'],
   hidden: ['actions', ...globalHiddenProperties],
