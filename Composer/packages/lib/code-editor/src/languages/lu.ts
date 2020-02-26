@@ -1,15 +1,16 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-import * as monacoEditor from '@bfcomposer/monaco-editor/esm/vs/editor/editor.api';
+import * as MonacoEditor from 'monaco-editor/esm/vs/editor/editor.api';
 
-export function registerLULanguage(monaco: typeof monacoEditor) {
+export function registerLULanguage(monaco: typeof MonacoEditor) {
   monaco.languages.setMonarchTokensProvider('lu', {
     tokenizer: {
       root: [
         [/^\s*#/, { token: 'intent', next: '@intent' }],
         [/^\s*@/, { token: 'entity-identifier', goBack: 1, next: '@entityMode' }],
         [/^\s*>\s*[\s\S]*$/, { token: 'comments' }],
+        [/^\s*-/, { token: 'utterrance-indentifier', next: '@utterrance' }],
       ],
 
       intent: [
@@ -24,7 +25,7 @@ export function registerLULanguage(monaco: typeof monacoEditor) {
         [/^\s*>\s*[\s\S]*$/, { token: 'comments' }],
         [/^\s*-/, { token: 'utterrance-indentifier', next: 'utterrance' }],
         [/^\s*@/, { token: 'entity-identifier', goBack: 1, next: '@entityMode' }],
-        [/({)(\s*[\w.@:\s]*\s*)(=)(\s*[\w.]*\s*)(})/, ['lb', 'pattern', 'equal', 'entity-name', 'rb']],
+        [/({)(\s*[\w.@:\s]*\s*)(=)(\s*[\w.\s]*\s*)(})/, ['lb', 'pattern', 'equal', 'entity-name', 'rb']],
         [/({\s*@)(\s*[\w.]*\s*)(})/, ['lb', 'entity-name', 'rb']],
         // eslint-disable-next-line security/detect-unsafe-regex
         [/\s*\[[\w\s.]+\]\(.{1,2}\/[\w.*]+(#[\w.?]+)?\)/, 'import-desc'],
