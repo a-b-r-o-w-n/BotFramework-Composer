@@ -80,7 +80,6 @@ const DefaultUISchema: UISchema = {
   [SDKTypes.HttpRequest]: {
     order: ['method', 'url', 'body', 'headers', '*'],
     hidden: [...globalHiddenProperties],
-ature/adaptive-form
   },
   [SDKTypes.IfCondition]: {
     hidden: ['actions', 'elseActions', ...globalHiddenProperties],
