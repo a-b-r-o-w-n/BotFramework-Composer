@@ -5,14 +5,17 @@ import React from 'react';
 import { Dropdown, IDropdownOption, ResponsiveMode } from 'office-ui-fabric-react/lib/Dropdown';
 import { FieldLabel } from '@bfc/adaptive-form';
 import { FieldProps, useShellApi } from '@bfc/extension';
-import { DialogInfo } from '@bfc/indexers';
+import { DialogInfo, LuFile } from '@bfc/indexers';
 import formatMessage from 'format-message';
 
 const EMPTY_OPTION = { key: '', text: '' };
 
-function luIntentOptions(currentDialog: DialogInfo): IDropdownOption[] {
-  const { luIntents } = currentDialog;
-  return luIntents.filter(Boolean).reduce((acc, intent) => [...acc, { key: intent, text: intent }], [EMPTY_OPTION]);
+function luIntentOptions(currentDialog: DialogInfo, luFiles: LuFile[]): IDropdownOption[] {
+  const { id } = currentDialog;
+  const luFile = luFiles.find(({ id: fileId }) => fileId === id);
+  return (luFile?.intents || []).reduce((acc, { Name: intent }) => [...acc, { key: intent, text: intent }], [
+    EMPTY_OPTION,
+  ]);
 }
 
 function regexIntentOptions(currentDialog: DialogInfo): IDropdownOption[] {
@@ -53,7 +56,7 @@ export const SelectIntent: React.FC<FieldProps> = ({
   value,
   placeholder,
 }) => {
-  const { currentDialog } = useShellApi();
+  const { currentDialog, luFiles } = useShellApi();
 
   const handleChange = (_, option): void => {
     if (option) {
@@ -65,7 +68,7 @@ export const SelectIntent: React.FC<FieldProps> = ({
 
   const options =
     type === RecognizerType.luis
-      ? luIntentOptions(currentDialog)
+      ? luIntentOptions(currentDialog, luFiles)
       : type === RecognizerType.regex
       ? regexIntentOptions(currentDialog)
       : [EMPTY_OPTION];
