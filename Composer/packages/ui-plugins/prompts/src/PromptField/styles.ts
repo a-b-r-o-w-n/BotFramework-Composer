@@ -20,24 +20,6 @@ export const tabs: Partial<IPivotStyles> = {
   },
 };
 
-export const tabsContainer = css`
-  border-bottom: 1px solid #c8c6c4;
-`;
-
-export const settingsContainer = css`
-  padding: 10px 18px;
-
-  label: PromptSettings;
-`;
-
-export const settingsHeader = css`
-  font-size: 16px;
-  font-weight: 600;
-  margin: 0 0 11px;
-
-  label: PromptSettingsHeader;
-`;
-
 export const settingsFields = css`
   display: flex;
   flex-wrap: wrap;
