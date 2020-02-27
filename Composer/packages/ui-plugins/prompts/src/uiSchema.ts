@@ -30,7 +30,7 @@ const uiSchema: UISchema = {
     helpLink: 'https://aka.ms/bfc-ask-for-user-input',
     properties: {
       prompt: {
-        label: 'Prompt for Attachment',
+        label: () => formatMessage('Prompt for Attachment'),
       },
       validations: {
         label: () => formatMessage('Validation Rules'),
@@ -43,7 +43,7 @@ const uiSchema: UISchema = {
     helpLink: 'https://aka.ms/bfc-ask-for-user-input',
     properties: {
       prompt: {
-        label: 'Prompt with multi-choice',
+        label: () => formatMessage('Prompt with multi-choice'),
       },
       validations: {
         label: () => formatMessage('Validation Rules'),
@@ -60,7 +60,7 @@ const uiSchema: UISchema = {
     helpLink: 'https://aka.ms/bfc-ask-for-user-input',
     properties: {
       prompt: {
-        label: 'Prompt for confirmation',
+        label: () => formatMessage('Prompt for confirmation'),
       },
       validations: {
         label: () => formatMessage('Validation Rules'),
@@ -77,7 +77,7 @@ const uiSchema: UISchema = {
     helpLink: 'https://aka.ms/bfc-ask-for-user-input',
     properties: {
       prompt: {
-        label: 'Prompt for a date',
+        label: () => formatMessage('Prompt for a date'),
       },
       validations: {
         label: () => formatMessage('Validation Rules'),
@@ -90,7 +90,7 @@ const uiSchema: UISchema = {
     helpLink: 'https://aka.ms/bfc-ask-for-user-input',
     properties: {
       prompt: {
-        label: 'Prompt for a number',
+        label: () => formatMessage('Prompt for a number'),
       },
       validations: {
         label: () => formatMessage('Validation Rules'),
@@ -103,7 +103,7 @@ const uiSchema: UISchema = {
     helpLink: 'https://aka.ms/bfc-ask-for-user-input',
     properties: {
       prompt: {
-        label: 'Prompt for text',
+        label: () => formatMessage('Prompt for text'),
       },
       validations: {
         label: () => formatMessage('Validation Rules'),
