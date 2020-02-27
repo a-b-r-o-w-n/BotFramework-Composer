@@ -16,7 +16,7 @@ export const tabs: Partial<IPivotStyles> = {
     flex: 1,
   },
   itemContainer: {
-    padding: '24px 18px',
+    padding: '12px 18px',
   },
 };
 
@@ -36,6 +36,6 @@ export const settingsFieldHalf = css`
   label: SettingsFieldHalf;
 
   & + & {
-    margin-left: 36px;
+    margin-left: 16px;
   }
 `;

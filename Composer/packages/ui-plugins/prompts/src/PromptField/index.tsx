@@ -22,7 +22,7 @@ const OTHER_FIELDS: InputDialogKeys[] = [
   'defaultValueResponse',
 ];
 
-const PromptField: React.FC<FieldProps> = ({ label, ...props }) => {
+const PromptField: React.FC<FieldProps> = ({ description, label, ...props }) => {
   const { shellApi, focusedSteps, focusedTab } = useShellApi();
 
   const getSchema: GetSchema = field => {
