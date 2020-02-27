@@ -22,9 +22,10 @@ function regexIntentOptions(currentDialog: DialogInfo): IDropdownOption[] {
   const {
     content: { recognizer },
   } = currentDialog;
-  return (recognizer?.intents || []).reduce((acc, { intent }) => [...acc, { key: intent, text: intent }], [
-    EMPTY_OPTION,
-  ]);
+  return (recognizer?.intents || []).reduce(
+    (acc, { intent }) => (!!intent ? [...acc, { key: intent, text: intent }] : acc),
+    [EMPTY_OPTION]
+  );
 }
 
 function recognizerType(currentDialog: DialogInfo): RecognizerType | null {
@@ -65,14 +66,15 @@ export const SelectIntent: React.FC<FieldProps> = ({
     }
   };
 
-  const type = recognizerType(currentDialog);
+  const options = useMemo(() => {
+    const type = recognizerType(currentDialog);
 
-  const options =
-    type === RecognizerType.luis
+    return type === RecognizerType.luis
       ? luIntentOptions(currentDialog, luFiles)
       : type === RecognizerType.regex
       ? regexIntentOptions(currentDialog)
       : [EMPTY_OPTION];
+  }, [currentDialog, luFiles]);
 
   return (
     <React.Fragment>
