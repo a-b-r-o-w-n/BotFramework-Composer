@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Dropdown, IDropdownOption, ResponsiveMode } from 'office-ui-fabric-react/lib/Dropdown';
 import { FieldLabel } from '@bfc/adaptive-form';
 import { FieldProps, useShellApi } from '@bfc/extension';
@@ -55,6 +55,7 @@ export const SelectIntent: React.FC<FieldProps> = ({
   onFocus,
   value,
   placeholder,
+  uiOptions,
 }) => {
   const { currentDialog, luFiles } = useShellApi();
 
@@ -75,17 +76,17 @@ export const SelectIntent: React.FC<FieldProps> = ({
 
   return (
     <React.Fragment>
-      <FieldLabel description={description} id={id} label={label} />
+      <FieldLabel description={description} helpLink={uiOptions?.helpLink} id={id} label={label} />
       <Dropdown
-        id={id.replace(/\.|#/g, '')}
+        disabled={disabled || options.length === 1}
+        id={id}
+        options={options}
+        placeholder={options.length > 1 ? placeholder : formatMessage('No intents configured for this dialog')}
+        responsiveMode={ResponsiveMode.large}
+        selectedKey={value || null}
         onBlur={() => onBlur && onBlur(id, value)}
         onChange={handleChange}
         onFocus={() => onFocus && onFocus(id, value)}
-        options={options}
-        selectedKey={value || null}
-        responsiveMode={ResponsiveMode.large}
-        disabled={disabled || options.length === 1}
-        placeholder={options.length > 1 ? placeholder : formatMessage('No intents configured for this dialog')}
       />
     </React.Fragment>
   );
