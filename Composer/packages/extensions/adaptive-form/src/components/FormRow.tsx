@@ -52,8 +52,25 @@ const FormRow: React.FC<FormRowProps> = props => {
   if (Array.isArray(row)) {
     return (
       <div css={formRow.row}>
-        {row.map((property, index) => (
-          <FormRow key={index} css={formRow.property} {...props} depth={depth + 1} row={property} />
+        {row.map(property => (
+          <SchemaField
+            key={`${id}.${property}`}
+            css={formRow.property}
+            className={className}
+            definitions={definitions}
+            depth={depth}
+            id={`${id}.${property}`}
+            label={label === false ? false : undefined}
+            name={property}
+            rawErrors={rawErrors?.[property]}
+            schema={resolvePropSchema(schema, property, definitions) || {}}
+            transparentBorder={transparentBorder}
+            uiOptions={(uiOptions.properties?.[property] as UIOptions) ?? {}}
+            value={value && value[property]}
+            onBlur={onBlur}
+            onChange={onChange(property)}
+            onFocus={onFocus}
+          />
         ))}
       </div>
     );
@@ -82,7 +99,7 @@ const FormRow: React.FC<FormRowProps> = props => {
     );
   }
 
-  return <React.Fragment>Form Row</React.Fragment>;
+  return null;
 };
 
 export { FormRow };
