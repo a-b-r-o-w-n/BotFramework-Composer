@@ -14,6 +14,7 @@ import SchemaField from '../SchemaField';
 import { arrayItem } from './styles';
 
 interface ArrayFieldItemProps extends FieldProps {
+  allowReorder?: boolean;
   index: number;
   canMoveUp: boolean;
   canMoveDown: boolean;
@@ -25,6 +26,7 @@ interface ArrayFieldItemProps extends FieldProps {
 
 const ArrayFieldItem: React.FC<ArrayFieldItemProps> = props => {
   const {
+    allowReorder,
     canMoveUp,
     canMoveDown,
     canRemove,
@@ -49,20 +51,6 @@ const ArrayFieldItem: React.FC<ArrayFieldItemProps> = props => {
 
   const contextItems: IContextualMenuItem[] = [
     {
-      key: 'moveUp',
-      text: 'Move Up',
-      iconProps: { iconName: 'CaretSolidUp' },
-      disabled: !canMoveUp,
-      onClick: fabricMenuItemClickHandler(() => onReorder(index - 1)),
-    },
-    {
-      key: 'moveDown',
-      text: 'Move Down',
-      iconProps: { iconName: 'CaretSolidDown' },
-      disabled: !canMoveDown,
-      onClick: fabricMenuItemClickHandler(() => onReorder(index + 1)),
-    },
-    {
       key: 'remove',
       text: 'Remove',
       iconProps: { iconName: 'Cancel' },
@@ -70,6 +58,24 @@ const ArrayFieldItem: React.FC<ArrayFieldItemProps> = props => {
       onClick: fabricMenuItemClickHandler(onRemove),
     },
   ];
+
+  allowReorder &&
+    contextItems.unshift(
+      {
+        key: 'moveUp',
+        text: 'Move Up',
+        iconProps: { iconName: 'CaretSolidUp' },
+        disabled: !canMoveUp,
+        onClick: fabricMenuItemClickHandler(() => onReorder(index - 1)),
+      },
+      {
+        key: 'moveDown',
+        text: 'Move Down',
+        iconProps: { iconName: 'CaretSolidDown' },
+        disabled: !canMoveDown,
+        onClick: fabricMenuItemClickHandler(() => onReorder(index + 1)),
+      }
+    );
 
   const handleBlur = () => {
     if (!value || (typeof value === 'object' && !Object.values(value).some(Boolean))) {
