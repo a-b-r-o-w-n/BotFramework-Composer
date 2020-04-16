@@ -3,7 +3,7 @@
 
 /** @jsx jsx */
 import { jsx } from '@emotion/core';
-import React from 'react';
+import React, { useMemo, useEffect } from 'react';
 import { FontWeights } from '@uifabric/styling';
 import { FontSizes } from '@uifabric/fluent-theme';
 import { Link } from 'office-ui-fabric-react/lib/Link';
@@ -28,6 +28,24 @@ interface FormTitleProps {
 
 const FormTitle: React.FC<FormTitleProps> = props => {
   const { name, description, schema, formData, uiOptions = {} } = props;
+  const uiLabel = typeof uiOptions?.label === 'function' ? uiOptions.label(formData) : uiOptions.label;
+  const uiSubtitle = typeof uiOptions?.subtitle === 'function' ? uiOptions.subtitle(formData) : uiOptions.subtitle;
+  const designerName = formData.$designer?.name;
+
+  const getTitle = (): string => {
+    return designerName || uiLabel || schema.title || startCase(name);
+  };
+
+  const initialTitle = useMemo(() => getTitle(), []);
+
+  useEffect(() => {
+    if (!designerName && props.onChange) {
+      props.onChange({
+        ...formData.$designer,
+        name: getTitle(),
+      });
+    }
+  }, []);
 
   const handleTitleChange = (newTitle?: string): void => {
     if (props.onChange) {
@@ -36,14 +54,6 @@ const FormTitle: React.FC<FormTitleProps> = props => {
         name: newTitle,
       });
     }
-  };
-
-  const uiLabel = typeof uiOptions?.label === 'function' ? uiOptions.label(formData) : uiOptions.label;
-  const uiSubtitle = typeof uiOptions?.subtitle === 'function' ? uiOptions.subtitle(formData) : uiOptions.subtitle;
-  const getTitle = (): string => {
-    const designerName = formData.$designer?.name;
-
-    return designerName || uiLabel || schema.title || startCase(name);
   };
 
   const getHelpLinkLabel = (): string => {
@@ -86,7 +96,8 @@ const FormTitle: React.FC<FormTitleProps> = props => {
             root: { margin: '5px 0 7px -9px' },
           }}
           uiOptions={{}}
-          value={getTitle()}
+          value={typeof designerName === 'string' ? designerName : initialTitle}
+          placeholder={initialTitle}
           onChange={handleTitleChange}
           ariaLabel={formatMessage('form title')}
         />
