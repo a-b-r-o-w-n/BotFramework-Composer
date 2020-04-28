@@ -8,7 +8,7 @@ import axios from 'axios';
 import { autofixReferInDialog } from '@bfc/indexers';
 import { getNewDesigner, FileInfo, Skill, BotSchemas } from '@bfc/shared';
 import { UserIdentity, JSONSchema7 } from '@bfc/plugin-loader';
-import $RefParser from '@apidevtools/json-schema-ref-parser';
+import once from 'lodash/once';
 
 import { Path } from '../../utility/path';
 import { copyDir } from '../../utility/storage';
@@ -16,6 +16,7 @@ import StorageService from '../../services/storage';
 import { ISettingManager, OBFUSCATED_VALUE } from '../settings';
 import { DefaultSettingManager } from '../settings/defaultSettingManager';
 import log from '../../logger';
+import { processSchema } from '../../utility/schema';
 
 import { ICrossTrainConfig } from './luPublisher';
 import { IFileStorage } from './../storage/interface';
@@ -52,10 +53,10 @@ const BotStructureTemplate = {
 
 const defaultSchemaPath = Path.resolve(__dirname, '../../../schemas/sdk.schema');
 
-const getDefaultSchema = async () => {
+const getDefaultSchema = once(async () => {
   const content = await readFileAsync(defaultSchemaPath, 'utf-8');
-  return JSON.parse(content);
-};
+  return content;
+});
 
 const templateInterpolate = (str: string, obj: { [key: string]: string }) =>
   str.replace(/\${([^}]+)}/g, (_, prop) => obj[prop]);
@@ -722,7 +723,7 @@ export class BotProject {
   };
 
   private _processSchemas = async (): Promise<BotSchemas> => {
-    let schema: JSONSchema7 = {};
+    let schema: JSONSchema7 | null = null;
     const diagnostics: string[] = [];
 
     const sdkSchema = this.files.find(f => f.name === 'sdk.schema');
@@ -730,9 +731,9 @@ export class BotProject {
     if (sdkSchema) {
       debug('Customized SDK schema found');
       try {
-        schema = JSON.parse(sdkSchema.content);
+        schema = await processSchema(sdkSchema.content);
       } catch (err) {
-        debug('Problem parsing sdk.schema. Using default. (%s)', defaultSchemaPath);
+        debug('Problem processing sdk.schema. Using default. (%s)', defaultSchemaPath);
         diagnostics.push(`Error in sdk.schema, ${err.message}`);
       }
     } else {
@@ -740,18 +741,16 @@ export class BotProject {
     }
 
     if (!schema) {
-      schema = await getDefaultSchema();
-    }
-
-    try {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      schema = (await $RefParser.dereference(schema as any, { dereference: { circular: 'ignore' } })) as JSONSchema7;
-    } catch (err) {
-      diagnostics.push(`Error in sdk.schema, ${err.message}`);
+      try {
+        const defaultContent = await getDefaultSchema();
+        schema = await processSchema(defaultContent);
+      } catch (err) {
+        diagnostics.push(`Error in sdk.schema, ${err.message}`);
+      }
     }
 
     return {
-      sdk: { content: schema },
+      sdk: { content: schema || {} },
       diagnostics,
     };
   };
