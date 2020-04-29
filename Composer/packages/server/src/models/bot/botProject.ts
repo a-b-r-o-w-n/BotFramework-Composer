@@ -6,9 +6,8 @@ import fs from 'fs';
 
 import axios from 'axios';
 import { autofixReferInDialog } from '@bfc/indexers';
-import { getNewDesigner, FileInfo, Skill, BotSchemas } from '@bfc/shared';
-import { UserIdentity, JSONSchema7 } from '@bfc/plugin-loader';
-import once from 'lodash/once';
+import { getNewDesigner, FileInfo, Skill } from '@bfc/shared';
+import { UserIdentity } from '@bfc/plugin-loader';
 
 import { Path } from '../../utility/path';
 import { copyDir } from '../../utility/storage';
@@ -16,7 +15,6 @@ import StorageService from '../../services/storage';
 import { ISettingManager, OBFUSCATED_VALUE } from '../settings';
 import { DefaultSettingManager } from '../settings/defaultSettingManager';
 import log from '../../logger';
-import { processSchema } from '../../utility/schema';
 
 import { ICrossTrainConfig } from './luPublisher';
 import { IFileStorage } from './../storage/interface';
@@ -27,7 +25,6 @@ import { DialogSetting } from './interface';
 
 const debug = log.extend('bot-project');
 const mkDirAsync = promisify(fs.mkdir);
-const readFileAsync = promisify(fs.readFile);
 
 const oauthInput = () => ({
   MicrosoftAppId: process.env.MicrosoftAppId || '',
@@ -51,13 +48,6 @@ const BotStructureTemplate = {
   },
 };
 
-const defaultSchemaPath = Path.resolve(__dirname, '../../../schemas/sdk.schema');
-
-const getDefaultSchema = once(async () => {
-  const content = await readFileAsync(defaultSchemaPath, 'utf-8');
-  return content;
-});
-
 const templateInterpolate = (str: string, obj: { [key: string]: string }) =>
   str.replace(/\${([^}]+)}/g, (_, prop) => obj[prop]);
 
@@ -72,17 +62,20 @@ export class BotProject {
   public files: FileInfo[] = [];
   public fileStorage: IFileStorage;
   public luPublisher: LuPublisher;
+  public defaultSDKSchema: {
+    [key: string]: string;
+  };
   public skills: Skill[] = [];
   public settingManager: ISettingManager;
   public settings: DialogSetting | null = null;
-  public schemas: BotSchemas = {};
-
   constructor(ref: LocationRef, user?: UserIdentity) {
     this.ref = ref;
     this.locale = 'en-us'; // default to en-us
     this.dir = Path.resolve(this.ref.path); // make sure we swtich to posix style after here
     this.dataDir = this.dir;
     this.name = Path.basename(this.dir);
+
+    this.defaultSDKSchema = JSON.parse(fs.readFileSync(Path.join(__dirname, '../../../schemas/sdk.schema'), 'utf-8'));
 
     this.settingManager = new DefaultSettingManager(this.dir);
     this.fileStorage = StorageService.getStorageClient(this.ref.storageId, user);
@@ -100,7 +93,7 @@ export class BotProject {
     this.files = await this._getFiles();
     this.settings = await this.getEnvSettings('', false);
     this.skills = await extractSkillManifestUrl(this.settings?.skill || []);
-    this.schemas = await this._processSchemas();
+    this.files = await this._getFiles();
   };
 
   public getProject = () => {
@@ -109,7 +102,7 @@ export class BotProject {
       locale: this.locale,
       files: this.files,
       location: this.dir,
-      schemas: this.schemas,
+      schemas: this.getSchemas(),
       skills: this.skills,
       settings: this.settings,
     };
@@ -159,8 +152,33 @@ export class BotProject {
     try {
       this.fileStorage.zip(this.dataDir, cb);
     } catch (e) {
-      debug('error zipping assets %s', e.message);
+      console.log('error zipping assets', e);
     }
+  };
+
+  public getSchemas = () => {
+    let sdkSchema = this.defaultSDKSchema;
+    const diagnostics: string[] = [];
+
+    const userSDKSchemaFile = this.files.find(f => f.name === 'sdk.schema');
+
+    if (userSDKSchemaFile !== undefined) {
+      debug('Customized SDK schema found');
+      try {
+        sdkSchema = JSON.parse(userSDKSchemaFile.content);
+      } catch (error) {
+        // eslint-disable-next-line no-console
+        console.error('Attempt to parse sdk schema as JSON failed');
+        diagnostics.push(`Error in sdk.schema, ${error.message}`);
+      }
+    }
+
+    return {
+      sdk: {
+        content: sdkSchema,
+      },
+      diagnostics,
+    };
   };
 
   public async saveSchemaToProject(schemaUrl, pathToSave) {
@@ -314,7 +332,7 @@ export class BotProject {
       try {
         await this.fileStorage.rmDir(folderPath);
       } catch (e) {
-        debug(e.message);
+        console.log(e);
       }
     }
   };
@@ -701,6 +719,10 @@ export class BotProject {
   };
 
   private _getSchemas = async (): Promise<FileInfo[]> => {
+    if (!(await this.exists())) {
+      throw new Error(`${this.dir} is not a valid path`);
+    }
+
     const schemasDir = Path.join(this.dir, 'schemas');
 
     if (!(await this.fileStorage.exists(schemasDir))) {
@@ -720,39 +742,6 @@ export class BotProject {
     }
 
     return schemas;
-  };
-
-  private _processSchemas = async (): Promise<BotSchemas> => {
-    let schema: JSONSchema7 | null = null;
-    const diagnostics: string[] = [];
-
-    const sdkSchema = this.files.find(f => f.name === 'sdk.schema');
-
-    if (sdkSchema) {
-      debug('Customized SDK schema found');
-      try {
-        schema = await processSchema(sdkSchema.content);
-      } catch (err) {
-        debug('Problem processing sdk.schema. Using default. (%s)', defaultSchemaPath);
-        diagnostics.push(`Error in sdk.schema, ${err.message}`);
-      }
-    } else {
-      debug('No sdk.schema found. Using default. (%s)', defaultSchemaPath);
-    }
-
-    if (!schema) {
-      try {
-        const defaultContent = await getDefaultSchema();
-        schema = await processSchema(defaultContent);
-      } catch (err) {
-        diagnostics.push(`Error in sdk.schema, ${err.message}`);
-      }
-    }
-
-    return {
-      sdk: { content: schema || {} },
-      diagnostics,
-    };
   };
 
   private _getFileInfo = async (path: string): Promise<FileInfo | undefined> => {

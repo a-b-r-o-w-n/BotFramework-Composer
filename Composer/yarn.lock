@@ -7,15 +7,6 @@
   resolved "https://registry.yarnpkg.com/7zip-bin/-/7zip-bin-5.0.3.tgz#bc5b5532ecafd923a61f2fb097e3b108c0106a3f"
   integrity sha512-GLyWIFBbGvpKPGo55JyRZAo4lVbnBiD52cKlw/0Vt+wnmKvWJkpZvsjVoaIolyBXDeAQKSicRtqFNPem9w0WYA==
 
-"@apidevtools/json-schema-ref-parser@^9.0.1":
-  version "9.0.1"
-  resolved "https://registry.yarnpkg.com/@apidevtools/json-schema-ref-parser/-/json-schema-ref-parser-9.0.1.tgz#c0ed0bd21a7397d2d7a83b69565268f2d78f2d7a"
-  integrity sha512-Qsdz0W0dyK84BuBh5KZATWXOtVDXIF2EeNRzpyWblPUeAmnIokwWcwrpAm5pTPMjuWoIQt9C67X3Af1OlL6oSw==
-  dependencies:
-    "@jsdevtools/ono" "^7.1.2"
-    call-me-maybe "^1.0.1"
-    js-yaml "^3.13.1"
-
 "@azure/arm-appservice-profile-2019-03-01-hybrid@^1.0.0":
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/@azure/arm-appservice-profile-2019-03-01-hybrid/-/arm-appservice-profile-2019-03-01-hybrid-1.0.0.tgz#36b41dd5ce2d7d07ac8828efb4bc0badf9820c3e"
@@ -3338,11 +3329,6 @@
     "@types/istanbul-reports" "^1.1.1"
     "@types/yargs" "^15.0.0"
     chalk "^3.0.0"
-
-"@jsdevtools/ono@^7.1.2":
-  version "7.1.2"
-  resolved "https://registry.yarnpkg.com/@jsdevtools/ono/-/ono-7.1.2.tgz#373995bb40a6686589a7fcfec06b0e6e304ef6c6"
-  integrity sha512-qS/a24RA5FEoiJS9wiv6Pwg2c/kiUo3IVUQcfeM9JvsR6pM8Yx+yl/6xWYLckZCT5jpLNhslgjiA8p/XcGyMRQ==
 
 "@microsoft/bf-cli-command@4.9.0-preview.121555":
   version "4.9.0-preview.121555"
