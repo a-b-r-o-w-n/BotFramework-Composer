@@ -46,6 +46,7 @@ const BotStructureTemplate = {
     lg: 'language-generation/${LOCALE}/${DIALOGNAME}.${LOCALE}.lg',
     lu: 'language-understanding/${LOCALE}/${DIALOGNAME}.${LOCALE}.lu',
   },
+  skillManifests: 'skill-manifests/${MANIFESTNAME}.manifest',
 };
 
 const templateInterpolate = (str: string, obj: { [key: string]: string }) =>
@@ -177,6 +178,7 @@ export class BotProject {
       sdk: {
         content: sdkSchema,
       },
+      default: this.defaultSDKSchema,
       diagnostics,
     };
   };
@@ -366,6 +368,13 @@ export class BotProject {
         DIALOGNAME,
         LOCALE,
       });
+    } else if (fileType === '.manifest') {
+      dir = templateInterpolate(
+        Path.dirname(Path.join(BotStructureTemplate.folder, BotStructureTemplate.skillManifests)),
+        {
+          MANIFESTNAME: id,
+        }
+      );
     }
     return dir;
   };
@@ -448,7 +457,7 @@ export class BotProject {
     }
 
     const fileList: FileInfo[] = [];
-    const patterns = ['**/*.dialog', '**/*.lg', '**/*.lu'];
+    const patterns = ['**/*.dialog', '**/*.lg', '**/*.lu', '**/*.manifest'];
     for (const pattern of patterns) {
       // load only from the data dir, otherwise may get "build" versions from
       // deployment process
